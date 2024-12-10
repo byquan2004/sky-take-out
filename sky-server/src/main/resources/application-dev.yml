@@ -6,8 +6,13 @@ sky:
     database: sky_take_out
     username: root
     password: root
+
   redis:
     host: localhost
     port: 6379
     database: 0
     password: root
+
+  aliyun-oss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    buket-name: quanzi-sky-take-out

@@ -3,12 +3,16 @@ package com.sky.service.impl;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.CategoryMapper;
+import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetMealMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.CategoryService;
@@ -16,6 +20,7 @@ import javassist.LoaderClassPath;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +34,11 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryMapper categoryMapper;
+
+    private final DishMapper dishMapper;
+
+    private final SetMealMapper setMealMapper;
+    private final HttpMessageConverters messageConverters;
 
     /**
      * 分类分页查询
@@ -66,6 +76,11 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public void remove(Long id) {
+        Integer countByDish = dishMapper.countByCategoryId(id);
+        if(countByDish > 0) throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
+
+        Integer countBySetMeal = setMealMapper.countByCategoryId(id);
+        if(countBySetMeal > 0) throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
         categoryMapper.remove(id);
     }
 
@@ -105,10 +120,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    public PageResult listForCategory(CategoryDTO categoryDTO) {
-        PageHelper.startPage(1, 100);
+    public List<Category> listForCategory(CategoryDTO categoryDTO) {
+//        PageHelper.startPage(1, 100);
         List<Category> categories = categoryMapper.queryByType(categoryDTO.getType());
-        Page<Category> pages = (Page<Category>) categories;
-        return new PageResult(pages.getTotal(), pages.getResult());
+//        Page<Category> pages = (Page<Category>) categories;
+        return categories;
     }
 }

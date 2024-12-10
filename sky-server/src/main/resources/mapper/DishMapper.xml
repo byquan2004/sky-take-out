@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+
+    <delete id="deleteByIds">
+        delete from dish where id in
+        <foreach collection="ids" separator="," open="(" item="id" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="list" resultType="com.sky.vo.DishVO">
+        select  d.*, c.name categoryName from dish d
+        left join category c on d.category_id = c.id
+        <where>
+            <if test="name != null and name != ''">
+                d.name like concat('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                and c.category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and d.status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="countEnableByIds" resultType="java.lang.Long">
+        select count(*) from dish where status = 1 and id in
+        <foreach collection="ids" separator="," open="(" item="id" close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

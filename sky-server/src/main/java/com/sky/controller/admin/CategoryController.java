@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
+import com.sky.entity.Category;
 import com.sky.mapper.CategoryMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
@@ -9,6 +10,8 @@ import com.sky.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -84,7 +87,7 @@ public class CategoryController {
      * @return
      */
     @GetMapping("/list")
-    public Result<PageResult> listForCategory(CategoryDTO categoryDTO){
+    public Result<List<Category>> listForCategory(CategoryDTO categoryDTO){
         log.info("根据类型查询分类:{}",categoryDTO);
         return Result.success(categoryService.listForCategory(categoryDTO));
     }
