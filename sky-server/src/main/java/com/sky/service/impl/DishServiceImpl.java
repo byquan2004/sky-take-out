@@ -8,13 +8,11 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
-import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetMealDishMapper;
-import com.sky.mapper.SetMealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
@@ -23,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -86,5 +85,56 @@ public class DishServiceImpl implements DishService {
         // 删除菜品 和 菜品口味
         dishFlavorMapper.deleteByDishIds(ids);
         dishMapper.deleteByIds(ids);
+    }
+
+    /**
+     * 根据id获取菜品信息
+     * @param id
+     */
+    @Override
+    public DishVO getInfo(Long id) {
+        // 获取菜品基本信息
+        Dish dish = dishMapper.getById(id);
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish, dishVO);
+
+        // 获取菜品口味信息
+        List<DishFlavor> flavors = dishFlavorMapper.getByDishId(id);
+        if(dishVO != null) dishVO.setFlavors(flavors);
+        return dishVO;
+    }
+
+    /**
+     * 修改菜品信息
+     * @param dishDTO
+     * @return
+     */
+    @Transactional
+    @Override
+    public void update(DishDTO dishDTO) {
+        // 更新菜品基本信息
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        dishMapper.update(dish);
+        // 删除菜品口味表的数据 重新添加
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if(flavors.isEmpty()) return;
+        flavors.forEach(flavor -> flavor.setDishId(dish.getId()));
+        dishFlavorMapper.deleteByDishIds(Collections.singletonList(dish.getId()));
+        dishFlavorMapper.insertBatch(flavors);
+    }
+
+    /**
+     * 修改菜品状态
+     * @param status
+     * @param id
+     */
+    @Override
+    public void isDisable(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.update(dish);
     }
 }

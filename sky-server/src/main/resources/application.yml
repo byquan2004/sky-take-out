@@ -52,3 +52,6 @@ sky:
     access-key-id: ${OSS_ACCESSKEY_ID}
     access-key-secret: ${OSS_ACCESSKEY_SECRET}
     bucket-name: ${sky.aliyun-oss.buket-name}
+  wechat:
+    appid: ${WX_APPID}
+    secret: ${WX_SECRET}
