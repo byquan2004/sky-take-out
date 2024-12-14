@@ -89,6 +89,6 @@ public class CategoryController {
     @GetMapping("/list")
     public Result<List<Category>> listForCategory(CategoryDTO categoryDTO){
         log.info("根据类型查询分类:{}",categoryDTO);
-        return Result.success(categoryService.listForCategory(categoryDTO));
+        return Result.success(categoryService.listForCategory(categoryDTO.getType()));
     }
 }

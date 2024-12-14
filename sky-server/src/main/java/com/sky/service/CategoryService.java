@@ -42,8 +42,8 @@ public interface CategoryService {
 
     /**
      * 根据类型查询分类
-     * @param categoryDTO
+     * @param type
      * @return
      */
-    List<Category> listForCategory(CategoryDTO categoryDTO);
+    List<Category> listForCategory(Integer type);
 }

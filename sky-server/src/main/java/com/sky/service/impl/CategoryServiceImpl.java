@@ -116,13 +116,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 根据类型查询分类
-     * @param categoryDTO
+     * @param type
      * @return
      */
     @Override
-    public List<Category> listForCategory(CategoryDTO categoryDTO) {
+    public List<Category> listForCategory(Integer type) {
 //        PageHelper.startPage(1, 100);
-        List<Category> categories = categoryMapper.queryByType(categoryDTO.getType());
+        List<Category> categories = categoryMapper.queryByType(type);
 //        Page<Category> pages = (Page<Category>) categories;
         return categories;
     }

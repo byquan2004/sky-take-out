@@ -1,16 +1,18 @@
-package com.sky.controller.admin;
+package com.sky.controller.user;
 
 import com.sky.result.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RestController("adminShopController")
-@RequestMapping("/admin/shop")
+@RestController("userShopController")
+@RequestMapping("/user/shop")
 @RequiredArgsConstructor
-public class shopController {
+public class ShopController {
 
     private final String SHOP_STATUS = "SHOP_STATUS";
 
@@ -28,16 +30,5 @@ public class shopController {
         Integer shopStatus = (Integer) redisTemplate.opsForValue().get(SHOP_STATUS);
         log.info("获取当前店铺营业状态:{}",shopStatus == 1? "营业中" : "休息中");
         return Result.success(shopStatus);
-    }
-
-    /**
-     * 修改店铺营业状态
-     * @return
-     */
-    @PutMapping("/{status}")
-    public Result update(@PathVariable Integer status) {
-        redisTemplate.opsForValue().set(SHOP_STATUS, status);
-        log.info("修改店铺营业状态:{}",status == 1? "营业中" : "休息中");
-        return Result.success();
     }
 }
