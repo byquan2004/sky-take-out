@@ -16,3 +16,11 @@ sky:
   aliyun-oss:
     endpoint: oss-cn-hangzhou.aliyuncs.com
     buket-name: quanzi-sky-take-out
+  wechat:
+    mchid: 1561414331
+    mchSerialNo: 4B3B3DC35414AD50B1B755BAF8DE9CC7CF407606
+    privateKeyFilePath: E:\project\sky-take-out-front-end\apiclient_key.pem
+    apiV3Key: CZBK51236435wxpay435434323FFDuv3
+    weChatPayCertFilePath: E:\project\sky-take-out-front-end\wechatpay_166D96F876F45C7D07CE98952A96EC980368ACFC.pem
+    notifyUrl: https://160f673b.r15.cpolar.top/notify/paySuccess
+    refundNotifyUrl: https://160f673b.r15.cpolar.top/notify/refundSuccess
