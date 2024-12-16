@@ -16,6 +16,7 @@ import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.BeanUtils;
@@ -31,17 +32,16 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final String LOGIN_ERROR_KEY_PREFIX = "login:error:";
 
     private final String LOGIN_LOCK_KEY_PREFIX = "login:lock:";
 
-    @Autowired
-    private EmployeeMapper employeeMapper;
+    private final EmployeeMapper employeeMapper;
 
-    @Autowired
-    private RedisTemplate<Object, Object> redisTemplate;
+    private final RedisTemplate<Object, Object> redisTemplate;
 
     /**
      * 员工登录

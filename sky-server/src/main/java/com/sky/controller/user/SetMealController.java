@@ -5,14 +5,16 @@ import com.sky.entity.Setmeal;
 import com.sky.result.Result;
 import com.sky.service.SetMealService;
 import com.sky.vo.DishItemVO;
+import com.sky.vo.SetmealVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
-@RestController("userSetmealController")
+@RestController("userSetMealController")
 @RequestMapping("/user/setmeal")
 @RequiredArgsConstructor
 public class SetMealController {
@@ -25,12 +27,13 @@ public class SetMealController {
      * @return
      */
     @GetMapping("/list")
-    public Result<List<Setmeal>> list(Long categoryId) {
+    @Cacheable(cacheNames = "setMealCache", key = "#categoryId")
+    public Result<List<SetmealVO>> list(Long categoryId) {
         Setmeal setmeal = new Setmeal();
         setmeal.setCategoryId(categoryId);
         setmeal.setStatus(StatusConstant.ENABLE);
 
-        List<Setmeal> list = setmealService.list(setmeal);
+        List<SetmealVO> list = setmealService.list(setmeal);
         return Result.success(list);
     }
 

@@ -19,10 +19,12 @@ public class MessageConstant {
     public static final String SETMEAL_ENABLE_FAILED = "套餐内包含未启售菜品，无法启售";
     public static final String PASSWORD_EDIT_FAILED = "密码修改失败";
     public static final String DISH_ON_SALE = "起售中的菜品不能删除";
+    public static final String SETMEAL_DISH_IS_NULL = "套餐中必须包含菜品";
     public static final String SETMEAL_ON_SALE = "起售中的套餐不能删除";
     public static final String DISH_BE_RELATED_BY_SETMEAL = "当前菜品关联了套餐,不能删除";
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
+    public static final String SETMEAL_NOT_FOUND = "套餐不存在";
     public static final String LOGIN_ERROR_FOR_TIMES = "您在5分钟内连续五次输错密码,账号锁定30分钟";
 
 }

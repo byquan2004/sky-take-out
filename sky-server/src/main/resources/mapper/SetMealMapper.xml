@@ -2,19 +2,71 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetMealMapper">
-
-    <select id="list" parameterType="Setmeal" resultType="Setmeal">
-        select * from setmeal
-        <where>
-            <if test="name != null">
-                and name like concat('%',#{name},'%')
-            </if>
+    <update id="update">
+        update setmeal
+        <set>
             <if test="categoryId != null">
-                and category_id = #{categoryId}
+                category_id = #{categoryId},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="price != null">
+                price = #{price},
             </if>
             <if test="status != null">
-                and status = #{status}
+                status = #{status},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="image != null">
+                image = #{image},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="removeByIds">
+        delete from setmeal where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="list" parameterType="Setmeal" resultType="com.sky.vo.SetmealVO">
+        select s.* ,c.name as categoryName from setmeal s
+        left join category c on s.category_id = c.id
+        <where>
+            <if test="name != null and name != ''">
+                 s.name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and s.category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and s.status = #{status}
             </if>
         </where>
+        order by create_time desc
+    </select>
+
+    <select id="queryBySetmealIds" resultType="long">
+        select count(*) from setmeal
+        where status = 1 and id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
     </select>
 </mapper>

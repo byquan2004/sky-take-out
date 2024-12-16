@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class DishController {
      * @return
      */
     @GetMapping("/list")
-    @ApiOperation("根据分类id查询菜品")
+    @Cacheable(cacheNames = "dishCache", key = "#categoryId")
     public Result<List<DishVO>> list(Integer categoryId) {
         DishPageQueryDTO dishPageQueryDTO = new DishPageQueryDTO();
         dishPageQueryDTO.setCategoryId(categoryId);
