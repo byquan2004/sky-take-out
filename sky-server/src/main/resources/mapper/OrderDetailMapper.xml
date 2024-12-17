@@ -10,4 +10,15 @@
              #{item.dishFlavor},#{item.number},#{item.amount})
         </foreach>
     </insert>
+
+    <select id="queryDishesByOrderIds" resultType="com.sky.entity.OrderDetail">
+        select * from order_detail where dish_id is not null
+        <if test="orderIds != null and orderIds.size() > 0">
+            and order_id in
+            <foreach collection="orderIds" item="orderId" separator="," open="(" close=")">
+                #{orderId}
+            </foreach>
+        </if>
+
+    </select>
 </mapper>

@@ -26,5 +26,8 @@ public class MessageConstant {
     public static final String ORDER_NOT_FOUND = "订单不存在";
     public static final String SETMEAL_NOT_FOUND = "套餐不存在";
     public static final String LOGIN_ERROR_FOR_TIMES = "您在5分钟内连续五次输错密码,账号锁定30分钟";
+    public static final String ORDER_CANCEL_BY_USER = "用户取消";
+    public static final String ORDER_CANCEL_CONNECT_STORE = "请联系商家取消订单";
+
 
 }

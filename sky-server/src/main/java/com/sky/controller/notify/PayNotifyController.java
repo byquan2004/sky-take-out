@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sky.properties.WeChatProperties;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
+import com.sky.websocket.WebSocketServer;
 import com.wechat.pay.contrib.apache.httpclient.util.AesUtil;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 支付回调相关接口
@@ -32,6 +34,8 @@ public class PayNotifyController {
     private final OrderService orderService;
     
     private final WeChatProperties weChatProperties;
+
+    private final WebSocketServer webSocketServer;
 
     /**
      * 支付成功回调
