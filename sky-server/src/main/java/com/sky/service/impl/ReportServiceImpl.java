@@ -2,19 +2,21 @@ package com.sky.service.impl;
 
 import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
-import com.sky.mapper.OrderMapper;
 import com.sky.mapper.ReportMapper;
-import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.service.WorkspaceService;
+import com.sky.vo.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.StringUtil;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,15 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
 
-    private final OrderMapper orderMapper;
+    private final WorkspaceService workspaceService;
 
     private final ReportMapper reportMapper;
-
-    private final UserMapper userMapper;
 
     /**
      * 指定日期营业额统计
@@ -93,10 +94,10 @@ public class ReportServiceImpl implements ReportService {
             LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
             LocalDateTime endTime = LocalDateTime.of(date, LocalTime.MAX);
             // 统计今日新用户数量
-            Integer newUser = reportMapper.countByStatus(beginTime,endTime);
+            Integer newUser = reportMapper.countUserByDate(beginTime,endTime);
             newUserList.add(newUser);
             // 统计截至目前总用户数量
-            Integer totalUser = reportMapper.countByStatus(null,endTime);
+            Integer totalUser = reportMapper.countUserByDate(null,endTime);
             totalUsers.add(totalUser);
         });
 
@@ -164,6 +165,58 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
+     * 导出运行数据报表
+     * @param response
+     */
+    @Override
+    public void export(HttpServletResponse response) {
+        // 计算三十天日期
+        LocalDateTime begin = LocalDateTime.now().minusMonths(1);
+        LocalDateTime end = LocalDateTime.now();
+        BusinessDataVO businessData = workspaceService.getBusinessData(begin, end);
+        try {
+            // 设置响应头
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"运营数据报表.xlsx\"");
+            InputStream inp = this.getClass().getClassLoader().getResourceAsStream("template/运营数据报表模板.xlsx");
+            if(inp == null){
+                throw new RuntimeException("文件不存在");
+            }
+            XSSFWorkbook workbook = new XSSFWorkbook(inp);
+            Sheet sheet1 = workbook.getSheet("Sheet1");
+            sheet1.getRow(1).getCell(1).setCellValue("统计日期:"+begin.toLocalDate() +"至"+ end.toLocalDate());
+
+            sheet1.getRow(3).getCell(2).setCellValue(businessData.getTurnover());
+            sheet1.getRow(3).getCell(4).setCellValue(businessData.getOrderCompletionRate());
+            sheet1.getRow(3).getCell(6).setCellValue(businessData.getNewUsers());
+            sheet1.getRow(4).getCell(2).setCellValue(businessData.getValidOrderCount());
+            sheet1.getRow(4).getCell(4).setCellValue(businessData.getUnitPrice());
+
+            Row row = sheet1.getRow(7);
+            for (int i = 1; i <= 30; i++) {
+                LocalDateTime dateTime = begin.plusDays(i);
+                LocalDateTime beginTime = LocalDateTime.of(dateTime.toLocalDate(), LocalTime.MIN);
+                LocalDateTime endTime = LocalDateTime.of(dateTime.toLocalDate(), LocalTime.MAX);
+                businessData = workspaceService.getBusinessData(beginTime, endTime);
+                row.getCell(i).setCellValue(dateTime.toLocalDate().toString());
+                row.getCell(i+1).setCellValue(businessData.getTurnover());
+                row.getCell(i+2).setCellValue(businessData.getOrderCompletionRate());
+                row.getCell(i+3).setCellValue(businessData.getNewUsers());
+                row.getCell(i+4).setCellValue(businessData.getValidOrderCount());
+                row.getCell(i+5).setCellValue(businessData.getUnitPrice());
+            }
+            ServletOutputStream out = response.getOutputStream();
+            workbook.write(out);
+            out.flush(); // 确保数据被写入
+            workbook.close();
+            inp.close();
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    /**
      * 根据状态统计订单数量
      * @param begin
      * @param end
@@ -171,6 +224,6 @@ public class ReportServiceImpl implements ReportService {
      * @return
      */
     private Integer getCountByStatus(LocalDateTime begin, LocalDateTime end, Integer status){
-        return reportMapper.countByStatistic(begin, end,status);
+        return reportMapper.countOrderByDateAndStatus(begin, end,status);
     }
 }

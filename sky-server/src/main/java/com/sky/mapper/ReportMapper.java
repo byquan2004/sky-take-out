@@ -2,7 +2,6 @@ package com.sky.mapper;
 
 import com.sky.dto.GoodsSalesDTO;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,7 +22,7 @@ public interface ReportMapper {
      * @param status
      * @return
      */
-    Integer countByStatistic(LocalDateTime begin, LocalDateTime end, Integer status);
+    Integer countOrderByDateAndStatus(LocalDateTime begin, LocalDateTime end, Integer status);
 
     /**
      * 统计前十商品销量
@@ -41,5 +40,5 @@ public interface ReportMapper {
      * @param endTime
      * @return
      */
-    Integer countByStatus(LocalDateTime beginTime, LocalDateTime endTime);
+    Integer countUserByDate(LocalDateTime beginTime, LocalDateTime endTime);
 }
