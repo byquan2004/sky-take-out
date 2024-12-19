@@ -46,7 +46,7 @@ public class OrderController {
      * @param id
      * @return
      */
-    @PutMapping("/complate/{id}")
+    @PutMapping("/complete/{id}")
     public Result complete(@PathVariable Long id){
         log.info("完成订单:{}", id);
         orderService.complete(id);

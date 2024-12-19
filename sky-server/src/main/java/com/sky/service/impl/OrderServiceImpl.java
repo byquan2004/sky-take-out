@@ -262,7 +262,7 @@ public class OrderServiceImpl implements OrderService {
     public void delivery(Long id) {
         Orders orders = orderMapper.getById(id);
         if(orders == null) throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
-        orders.setDeliveryStatus(Orders.DELIVERY_IN_PROGRESS);
+        orders.setStatus(Orders.DELIVERY_IN_PROGRESS);
         orderMapper.update(orders);
     }
 
